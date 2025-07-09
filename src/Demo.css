@@ -1,0 +1,9 @@
+.card-personal {
+  background-color: rgb(223, 76, 76);
+  box-shadow: 0 4px 8px 0 black
+}
+
+.card-trabajo {
+  background-color: palegoldenrod;
+  box-shadow: 0 4px 8px 0 black
+}

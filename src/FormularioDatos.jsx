@@ -17,66 +17,95 @@ export default function FormularioDatos({agregarDatos, contactoId}) {
         setMostrar(!mostrar)
     }
 
-    const enviarDatos =(e) => {
-        e.preventDefault();
-        const contacto_id = contactoId
+    function validar() {
+        const ret_validar_tipo = validarTipo();
+        const ret_validar_fono = validarFono();
+        const ret_validar_correo = validarCorreo();
+        
+        return ret_validar_tipo && ret_validar_fono && ret_validar_correo;
+    }
 
-        const nuevo_datos = {
-            id_contacto: contacto_id,
-            tipo: tipo,
-            telefono: telefonoDatos,
-            correo: correoDatos,
-            direccion: direccionDatos
-        };
-
+    function validarTipo() {
         if (tipo == '') {
             setErrorTipo('Debe marcar un tipo de contacto')
-            return;
+            return false;
+        }else if (datos.find(d=> d.tipo === tipo)) {
+            setErrorTipo('Ya agregó este tipo de contacto')
+            return false;
+        }  else if (tipo && !telefonoDatos && !correoDatos && !direccionDatos) {
+            setErrorTipo('Debe agregar algún dato de contacto')
+            return false;
         } else {
-            const regex = /(^[0-9]{2})?[ -]?9[0-9]{8}$/
-            let valid = regex.test(telefonoDatos)
-
-            const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            let valido = regexEmail.test(correoDatos);
-
-                if (datos.find(d=> d.tipo === tipo)) {
-                    setErrorTipo('Ya agregó este tipo de contacto')
-                    return;
-                }else if (tipo == '') {
-                    setErrorTipo('Debe marcar un tipo de contacto')
-                    return;
-                } else if (isNaN(telefonoDatos)) {
-                    setErrorFono('El teléfono debe ser numérico');
-                    // divErrFono.className = 'text-danger small';
-                    return;
-                } else if (!valid  && telefonoDatos != '') {
-                    setErrorFono('El número no corresponde a un teléfono válido');
-                    return;
-                }else if (!valido && correoDatos != '') {
-                    setErrorCorreo('Debe ingresar un correo electrónico válido')
-                    return;
-                } else if (tipo && !telefonoDatos && !correoDatos && !direccionDatos) {
-                    setErrorTipo('Debe agregar algún dato de contacto')
-                    return;
-                } else {
-                    agregarDatos(nuevo_datos)
-                    setDatos([...datos, nuevo_datos])
-                }
+            setErrorTipo('')
+            return true;
         }
-        document.getElementById("nombre").value = "";
-        document.getElementById("apellido").value = "";
-        setTipo("");
-        setTelefonoDatos("");
-        setCorreoDatos("");
-        setDireccionDatos("");
+    }
+
+    function validarFono() {
+        const regex = /(^[0-9]{2})?[ -]?9[0-9]{8}$/
+        let valid = regex.test(telefonoDatos)
+        if (isNaN(telefonoDatos)) {
+            setErrorFono('El teléfono debe ser numérico');
+            // divErrFono.className = 'text-danger small';
+            return false;
+        } else if (!valid  && telefonoDatos != '') {
+            setErrorFono('El número no corresponde a un teléfono válido');
+            return false;
+        }else {
+            setErrorFono('')
+            return true;
+        }
+    }
+
+    function validarCorreo() {
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let valido = regexEmail.test(correoDatos);
+        if (!valido && correoDatos != '') {
+            setErrorCorreo('Debe ingresar un correo electrónico válido')
+            return false;
+        }else {
+            setErrorCorreo('')
+            return true;
+        }
+    }
+
+const enviarDatos = (e) => {
+    e.preventDefault();
+
+    const contacto_id = contactoId;
+
+    const nuevo_datos = {
+        id_contacto: contacto_id,
+        tipo: tipo,
+        telefono: telefonoDatos,
+        correo: correoDatos,
+        direccion: direccionDatos
+    };
+
+    const tipoYaExiste = datos.some(d => d.tipo === nuevo_datos.tipo);
+    if (tipoYaExiste) {
+        setErrorTipo('Ya agregó este tipo de contacto');
+        return;
+    }
+
+    const es_valido = validar();
+    if (es_valido) {
+        agregarDatos(nuevo_datos);
+        setDatos([...datos, nuevo_datos]);
+
+        setTipo('');
+        setTelefonoDatos('');
+        setCorreoDatos('');
+        setDireccionDatos('');
 
         setErrorUsuario('');
         setErrorTipo('');
         setErrorFono('');
         setErrorCorreo('');
         setMostrar(false);
+    }
+};
 
-    };
 
     return (
         <div>

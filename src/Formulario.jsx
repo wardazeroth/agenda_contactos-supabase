@@ -6,6 +6,8 @@ export default function Formulario ({agregar, agregarDatos}) {
     const [usuarios, setUsuarios] = useState([]);
     const [tipo, setTipo] = useState('');
     const [mostrar, setMostrar] = useState(false);
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
     const [datos, setDatos] = useState('')
     const [telefono, setTelefono] = useState('') 
     const [correo, setCorreo] = useState('')
@@ -23,8 +25,7 @@ export default function Formulario ({agregar, agregarDatos}) {
     const enviar = async (event) => {
         event.preventDefault();
         
-        const nombre = document.getElementById('nombre').value;
-        const apellido = document.getElementById('apellido').value;
+
         const nuevo = {
             nombre: nombre,
             apellido: apellido,
@@ -38,12 +39,12 @@ export default function Formulario ({agregar, agregarDatos}) {
 
         const contacto_ultimo = await agregar(nuevo);
         const id_contacto = contacto_ultimo.id_contacto
+        setNombre('')
+        setApellido('')
 
         console.log('el id contact: '+id_contacto)
         setUsuarios([...usuarios, nuevo])
 
-        document.getElementById("nombre").value = "";
-        document.getElementById("apellido").value = "";
         setErrorUsuario('');
 
         const nuevo_datos = {
@@ -102,12 +103,12 @@ export default function Formulario ({agregar, agregarDatos}) {
             <form onSubmit={enviar}>
                 <div className="row g-4 my-3">
                     <div className="col-md-6">
-                        <label className="form-label" htmlFor="nombre">Nombre</label>
-                        <input className="form-control" id="nombre" type="text" placeholder="Ingrese el nombre" required/>
+                        <label className="form-label mx-3" htmlFor="nombre">Nombre</label>
+                        <input id="nombre" value={nombre} placeholder="Ingrese el nombre" onChange={e => setNombre(e.target.value)} required/> 
                     </div>
                     <div className="col-md-6">
-                        <label className="form-label" htmlFor="apellido">Apellido</label>
-                        <input className="form-control" id="apellido" type="text" placeholder="Ingrese el apellido" required/>
+                        <label className="form-label mx-3" htmlFor="nombre">Apellido</label>
+                        <input id="apellido" value={apellido} placeholder="Ingrese el apellido" onChange={e => setApellido(e.target.value)} required/> 
                     </div>
                     <div>
                         <p className = 'text-danger small'>{errorUsuario}</p>

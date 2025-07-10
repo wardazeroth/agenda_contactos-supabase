@@ -10,6 +10,7 @@ export default function Demo() {
     const [arrDatos, setArrDatos] = useState([]);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
         obtenerUsuarios().then(data => {
             setArrUsuarios(data);
@@ -26,8 +27,12 @@ export default function Demo() {
     };
 
     const delUsuario = async (id_contacto) => {
-        await eliminarUsuario (id_contacto);
+        const confirmacion = confirm('¿Está seguro que desea eliminar este usuario?');
+        if (confirmacion) {
+                    await eliminarUsuario (id_contacto);
         setArrUsuarios(arrUsuarios.filter(u => u.id_contacto != id_contacto ));
+        }
+
     }
 
         const addDatos = async (datos) => {
@@ -39,24 +44,33 @@ export default function Demo() {
     if (loading) return <div>Cargando usuarios...</div>;
 
     return (
-        <div className="container my-5">
-            <h2>Agenda de contactos</h2>
-            <Formulario agregar={addUsuario} agregarDatos={addDatos}></Formulario>
-            
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                {
-                    arrUsuarios.map((usuario) => (
-                        <div className="col" key={usuario.id_contacto}>
-                            <Ficha
-                                nombre={usuario.nombre}
-                                apellido={usuario.apellido}
-                                id_contacto = {usuario.id_contacto}
-                                eliminar={() => delUsuario(usuario.id_contacto)}                                
-                            ></Ficha>
-                        </div> 
-                    ))
-                } 
+        <div className="super mt-3">
+            <div className="encabezado">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <h2>Agenda de contactos</h2>
+                    
+                <Formulario agregar={addUsuario} agregarDatos={addDatos}></Formulario>
+            </div>
+            <div className="container my-5">
+                <div className="d-flex flex-wrap justify-content-center gap-4">
+                    {
+                        arrUsuarios.map((usuario) => (
+                            <div className="col-auto" key={usuario.id_contacto}>
+                                <Ficha
+                                    nombre={usuario.nombre}
+                                    apellido={usuario.apellido}
+                                    id_contacto = {usuario.id_contacto}
+                                    eliminar={() => delUsuario(usuario.id_contacto)}                          
+                                ></Ficha>
+                            </div> 
+                        ))
+                    } 
+                </div>
             </div>
         </div>
+
     )
 }
